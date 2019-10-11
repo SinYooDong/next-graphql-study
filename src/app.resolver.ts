@@ -23,22 +23,23 @@ export class AppResolver {
 
     @Query(returns => Cat, { nullable: true })
     async findOneById(
-        @Args('id', ParseIntPipe)
-        id: number
+        @Args('id')
+        id: string
     ): Promise<any> {
         return this.catsService.findById(id);
     }
     @Mutation(returns => Cat)
     async creatCat(@Args({ name: 'name', type: () => String }) name: string, @Args({ name: 'age', type: () => Int,defaultValue:10 }) agr: number) {
         let newCat:any = await this.catsService.createCat(name, agr);
+        await this.houseService.createHouse(newCat._id,`${newCat.name}의 집`);
         pubSub.publish('commentAdded', {id:newCat.id,content:newCat.name});
         return newCat
     }
 
     @ResolveProperty('house',()=>[House])
     async getHouse(@Parent() cat) {
-        const { id } = cat;
-        return await this.houseService.findAll();
+        const { _id } = cat;
+        return await this.houseService.findAll(_id);
     }
 
     @Subscription(returns => Comment, {

@@ -1,39 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from 'nestjs-typegoose';
+import { ReturnModelType } from "@typegoose/typegoose";
+import Cat from "../schemas/Cat"
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class CatService {
-    cats = [];
-    constructor() {
-        this.cats = [{
-            id: 1,
-            name: 'Mjau',
-            age: 17
-        },
-        {
-            id: 2,
-            name: '미용',
-            age: 12
-        },
-        {
-            id: 3,
-            name: '미뇽',
-            age: 11
-        }]
+    constructor(@InjectModel(Cat) private readonly catModel: ReturnModelType<typeof Cat>) {
     }
 
-    findAll = () => {
-        return this.cats;
+    findAll = async() => {
+        return await this.catModel.find();
     }
 
-    findById = (id: number) => {
-        return this.cats.find(c => c.id === id);
+    findById = async (id: string) => {
+        return await this.catModel.findOne({_id:id})
     }
 
     createCat = async (name: string, age: number) => {
-        let newCat = {
-            id: this.cats.length + 1, name: name, age: age
-        };
-        await this.cats.push(newCat);
-        return newCat;
+        let newCat = new this.catModel({
+            name: name, age: age
+        });
+        return await newCat.save();
     }
 }

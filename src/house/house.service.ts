@@ -1,31 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import House from '../schemas/House';
+import { InjectModel } from 'nestjs-typegoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class HouseService {
-    house = [];
-    constructor() {
-        this.house = [{
-            id: 1,
-            name: "사무실"
-        }, {
-            id: 2,
-            name: "집"
-        }]
+    constructor(@InjectModel(House) private readonly houseModel: ReturnModelType<typeof House>) {
     }
 
-    findAll = () => {
-        return this.house;
+    findAll = async (_id) => {
+        return await this.houseModel.find({id:_id});
     }
 
-    findById = (id: number) => {
-        return this.house.find(c => c.id === id);
+    findById = async (id: number) => {
+        return await this.houseModel.findOne({_id:id});
     }
 
-    // createCat = async (name: string, age: number) => {
-    //     let newCat = {
-    //         id: this.cats.length + 1, name: name, age: age
-    //     };
-    //     await this.cats.push(newCat);
-    //     return newCat;
-    // }
+    createHouse = async (id:string,name: string) => {
+        let newHouse = new this.houseModel({id,name});
+        return await newHouse.save();
+    }
 }

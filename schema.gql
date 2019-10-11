@@ -4,7 +4,7 @@
 # -----------------------------------------------
 
 type Cat {
-  id: Int!
+  _id: String!
   name: String!
   age: Int!
   house: [House!]!
@@ -16,7 +16,8 @@ type Comment {
 }
 
 type House {
-  id: Int!
+  _id: String!
+  id: String!
   name: String!
 }
 
@@ -26,7 +27,7 @@ type Mutation {
 
 type Query {
   getCats: [Cat!]
-  findOneById(id: Float!): Cat
+  findOneById(id: String!): Cat
 }
 
 type Subscription {
