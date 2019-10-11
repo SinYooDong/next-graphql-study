@@ -12,9 +12,9 @@ const pubSub = new PubSub();
 @Resolver(of => Cat)
 export class AppResolver {
 
-    constructor(private readonly catsService : CatService,private readonly houseService : HouseService){}
+    constructor(private readonly catsService: CatService, private readonly houseService: HouseService) { }
 
-    @Query(returns => [Cat], { nullable: true })
+    @Query(returns => [Cat], { nullable: true, description: "모든 고양이 반환" })
     getCats() {
         console.log("getCats");
         return this.catsService.findAll();
@@ -23,20 +23,20 @@ export class AppResolver {
 
     @Query(returns => Cat, { nullable: true })
     async findOneById(
-        @Args('id')
+        @Args({ name: "id", type: () => String, description: "검색 ID", nullable: true })
         id: string
     ): Promise<any> {
         return this.catsService.findById(id);
     }
     @Mutation(returns => Cat)
-    async creatCat(@Args({ name: 'name', type: () => String }) name: string, @Args({ name: 'age', type: () => Int,defaultValue:10 }) agr: number) {
-        let newCat:any = await this.catsService.createCat(name, agr);
-        await this.houseService.createHouse(newCat._id,`${newCat.name}의 집`);
-        pubSub.publish('commentAdded', {id:newCat.id,content:newCat.name});
+    async creatCat(@Args({ name: 'name', type: () => String }) name: string, @Args({ name: 'age', type: () => Int, defaultValue: 10 }) agr: number) {
+        let newCat: any = await this.catsService.createCat(name, agr);
+        await this.houseService.createHouse(newCat._id, `${newCat.name}의 집`);
+        pubSub.publish('commentAdded', { id: newCat.id, content: newCat.name });
         return newCat
     }
 
-    @ResolveProperty('house',()=>[House])
+    @ResolveProperty('house', () => [House])
     async getHouse(@Parent() cat) {
         const { _id } = cat;
         return await this.houseService.findAll(_id);

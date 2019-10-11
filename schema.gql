@@ -5,7 +5,7 @@
 
 type Cat {
   _id: String!
-  name: String!
+  name: String
   age: Int!
   house: [House!]!
 }
@@ -26,8 +26,12 @@ type Mutation {
 }
 
 type Query {
+  """모든 고양이 반환"""
   getCats: [Cat!]
-  findOneById(id: String!): Cat
+  findOneById(
+    """검색 ID"""
+    id: String
+  ): Cat
 }
 
 type Subscription {

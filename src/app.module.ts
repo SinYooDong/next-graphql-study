@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql'
 import { AppResolver } from './app.resolver';
@@ -15,8 +16,8 @@ import House from "./schemas/House";
       autoSchemaFile: 'schema.gql',
       installSubscriptionHandlers: true
     }),
-    TypegooseModule.forRoot('mongodb+srv://api_user:apiuser@test-igew5.mongodb.net/test?retryWrites=true&w=majority'),
-    TypegooseModule.forFeature([Cat,House])
+    TypegooseModule.forRoot(process.env.DATABASE),
+    TypegooseModule.forFeature([Cat,House]),
   ],
   providers: [AppResolver, CatService, HouseService]
   // controllers: [AppController],
